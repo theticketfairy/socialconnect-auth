@@ -102,7 +102,6 @@ class Spotify extends \SocialConnect\OAuth2\AbstractProvider
 
         /** @var User $user */
         $user = $hydrator->hydrate(new User(), $result);
-        $user->pictureURL = "https://bitbucket.org/account/{$user->username}/avatar/512/";
 
         return $user;
     }

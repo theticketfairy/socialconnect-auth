@@ -74,7 +74,8 @@ abstract class AbstractProvider extends AbstractBaseProvider
         if (!$this->getBoolOption('stateless', false)) {
             $this->session->set(
                 'oauth2_state',
-                $urlParameters['state'] = $this->generateState()
+                $urlParameters['state'] = $this->generateState(),
+				$this->getName()
             );
         }
 
@@ -167,7 +168,7 @@ abstract class AbstractProvider extends AbstractBaseProvider
     public function getAccessTokenByRequestParameters(array $parameters)
     {
         if (!$this->getBoolOption('stateless', false)) {
-            $state = $this->session->get('oauth2_state');
+            $state = $this->session->get('oauth2_state', $this->getName());
             if (!$state) {
                 throw new UnknownAuthorization();
             }

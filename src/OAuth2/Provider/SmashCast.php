@@ -113,7 +113,7 @@ class SmashCast extends \SocialConnect\OAuth2\AbstractProvider
     public function getAccessTokenByRequestParameters(array $parameters)
     {
         if (!$this->getBoolOption('stateless', false)) {
-            $state = $this->session->get('oauth2_state');
+            $state = $this->session->get('oauth2_state', $this->getName());
             if (!$state) {
                 throw new UnknownAuthorization();
             }

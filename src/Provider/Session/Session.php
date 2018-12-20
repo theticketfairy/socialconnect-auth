@@ -14,13 +14,15 @@ class Session implements SessionInterface
         }
     }
 
-    /**
-     * @param string $key
-     *
-     * @return mixed
+	/**
+     * @inheritdoc
      */
-    public function get($key)
+    public function get($key, $provider = null)
     {
+    	if ($provider !== null) {
+    		$key = $key . '_' . $provider;
+		}
+
         if (isset($_SESSION[$key])) {
             return $_SESSION[$key];
         }
@@ -28,20 +30,27 @@ class Session implements SessionInterface
         return null;
     }
 
-    /**
-     * @param string $key
-     * @param mixed $value
-     */
-    public function set($key, $value)
+	/**
+	 * @inheritdoc
+	 */
+    public function set($key, $value, $provider = null)
     {
+		if ($provider !== null) {
+			$key = $key . '_' . $provider;
+		}
+
         $_SESSION[$key] = $value;
     }
 
-    /**
-     * @param string $key
-     */
-    public function delete($key)
+	/**
+	 * @inheritdoc
+	 */
+    public function delete($key, $provider = null)
     {
+		if ($provider !== null) {
+			$key = $key . '_' . $provider;
+		}
+
         if (isset($_SESSION[$key])) {
             unset($_SESSION[$key]);
         }

@@ -107,7 +107,7 @@ abstract class AbstractProvider extends AbstractBaseProvider
             $token = $this->parseToken($response->getBody());
 
 
-            $this->session->set('oauth1_request_token', $token);
+            $this->session->set('oauth1_request_token', $token, $this->getName());
 
             return $token;
         }
@@ -198,12 +198,12 @@ abstract class AbstractProvider extends AbstractBaseProvider
      */
     public function getAccessTokenByRequestParameters(array $parameters)
     {
-        $token = $this->session->get('oauth1_request_token');
+        $token = $this->session->get('oauth1_request_token', $this->getName());
         if (!$token) {
             throw new UnknownAuthorization();
         }
 
-        $this->session->delete('oauth1_request_token');
+        $this->session->delete('oauth1_request_token', $this->getName());
 
         return $this->getAccessToken($token, $parameters['oauth_verifier']);
     }

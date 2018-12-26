@@ -74,4 +74,13 @@ class AccessToken extends \SocialConnect\OAuth1\Token implements AccessTokenInte
         // @todo support
         return null;
     }
+
+	/**
+	 * @return string|null
+	 */
+	public function getRefreshToken()
+	{
+		// Oath1 does not support refresh token
+		return null;
+	}
 }

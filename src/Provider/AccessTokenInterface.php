@@ -21,4 +21,9 @@ interface AccessTokenInterface
      * @return integer|null
      */
     public function getExpires();
+
+    /**
+	 * @return string|null
+	 */
+    public function getRefreshToken();
 }

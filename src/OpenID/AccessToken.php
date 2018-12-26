@@ -55,4 +55,12 @@ class AccessToken implements AccessTokenInterface
     {
         return null;
     }
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getRefreshToken()
+	{
+		return null;
+	}
 }

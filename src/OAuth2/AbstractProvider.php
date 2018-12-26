@@ -75,7 +75,7 @@ abstract class AbstractProvider extends AbstractBaseProvider
             $this->session->set(
                 'oauth2_state',
                 $urlParameters['state'] = $this->generateState(),
-				$this->getName()
+                $this->getName()
             );
         }
 
@@ -133,6 +133,29 @@ abstract class AbstractProvider extends AbstractBaseProvider
     }
 
     /**
+     * @param string $refresh_token
+     * @return \SocialConnect\Common\Http\Request
+     */
+    protected function makeRefreshTokenRequest($refresh_token)
+    {
+        $parameters = [
+            'client_id' => $this->consumer->getKey(),
+            'client_secret' => $this->consumer->getSecret(),
+            'refresh_token' => $refresh_token,
+            'grant_type' => 'refresh_token',
+        ];
+
+        return new \SocialConnect\Common\Http\Request(
+            $this->getRequestTokenUri(),
+            $parameters,
+            $this->requestHttpMethod,
+            [
+                'Content-Type' => 'application/x-www-form-urlencoded'
+            ]
+        );
+    }
+
+    /**
      * @param string $code
      * @return AccessToken
      * @throws InvalidResponse
@@ -145,6 +168,34 @@ abstract class AbstractProvider extends AbstractBaseProvider
 
         $response = $this->httpClient->fromRequest(
             $this->makeAccessTokenRequest($code)
+        );
+
+        if (!$response->isSuccess()) {
+            throw new InvalidResponse(
+                'API response with error code',
+                $response
+            );
+        }
+
+        $body = $response->getBody();
+        return $this->parseToken($body);
+    }
+
+    /**
+     * @param string $refresh_token
+     * @return AccessToken
+	 *
+     * @throws InvalidResponse
+     * @throws InvalidAccessToken
+     */
+    public function refreshAccessToken($refresh_token)
+    {
+        if (!is_string($refresh_token)) {
+            throw new InvalidArgumentException('Parameter $refresh_token must be a string');
+        }
+
+        $response = $this->httpClient->fromRequest(
+            $this->makeRefreshTokenRequest($refresh_token)
         );
 
         if (!$response->isSuccess()) {

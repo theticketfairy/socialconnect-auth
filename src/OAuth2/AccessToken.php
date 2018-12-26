@@ -17,6 +17,11 @@ class AccessToken implements AccessTokenInterface
     protected $token;
 
     /**
+     * @var string
+     */
+    protected $refresh_token;
+
+    /**
      * @var int|null
      */
     protected $expires;
@@ -61,6 +66,10 @@ class AccessToken implements AccessTokenInterface
 
         if (isset($token['user_id'])) {
             $this->uid = $token['user_id'];
+        }
+
+        if (isset($token['refresh_token'])) {
+            $this->refresh_token = $token['refresh_token'];
         }
     }
 
@@ -108,5 +117,13 @@ class AccessToken implements AccessTokenInterface
     public function getExpires()
     {
         return $this->expires;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getRefreshToken()
+    {
+        return $this->refresh_token;
     }
 }

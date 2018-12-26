@@ -30,7 +30,9 @@ class Faceit extends \SocialConnect\OAuth2\AbstractProvider
      */
     public function getAuthorizeUri()
     {
-        return 'https://api.faceit.com/auth/v1/api/authorize';
+    	// According to documentation: http://assets1.faceit.com/third_party/docs/Faceit_Connect.pdf
+        return 'https://cdn.faceit.com/widgets/sso/index.html';
+        // return 'https://api.faceit.com/auth/v1/api/authorize';
     }
 
     /**
@@ -49,9 +51,67 @@ class Faceit extends \SocialConnect\OAuth2\AbstractProvider
         return self::NAME;
     }
 
-	/**
-	 * {@inheritdoc}
-	 */
+    /**
+     * @param string $code
+     * @return \SocialConnect\Common\Http\Request
+     */
+    protected function makeAccessTokenRequest($code)
+    {
+        $parameters = [
+            'code' => $code,
+            'grant_type' => 'authorization_code',
+            'redirect_uri' => $this->getRedirectUrl()
+        ];
+
+        return new \SocialConnect\Common\Http\Request(
+            $this->getRequestTokenUri(),
+            $parameters,
+            $this->requestHttpMethod,
+            [
+                'Content-Type' => 'application/x-www-form-urlencoded',
+                'Authorization' => 'Basic ' . base64_encode($this->consumer->getKey() . ':' . $this->consumer->getSecret())
+            ]
+        );
+    }
+
+    /**
+     * @param string $refresh_token
+     * @return \SocialConnect\Common\Http\Request
+     */
+    protected function makeRefreshTokenRequest($refresh_token)
+    {
+        $parameters = [
+            'refresh_token' => $refresh_token,
+            'grant_type' => 'refresh_token',
+        ];
+
+        return new \SocialConnect\Common\Http\Request(
+            $this->getRequestTokenUri(),
+            $parameters,
+            $this->requestHttpMethod,
+            [
+                'Content-Type' => 'application/x-www-form-urlencoded',
+                'Authorization' => 'Basic ' . base64_encode($this->consumer->getKey() . ':' . $this->consumer->getSecret())
+            ]
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAuthUrlParameters(): array
+    {
+        $parameters = parent::getAuthUrlParameters();
+
+        // special parameters only required for FACEIT
+        $parameters['redirect_popup'] = 'true';
+
+        return $parameters;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function parseToken($body)
     {
         if (empty($body)) {

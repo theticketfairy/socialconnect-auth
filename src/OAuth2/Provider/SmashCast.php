@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace SocialConnect\OAuth2\Provider;
 
-use SocialConnect\Common\Http\Client\Client;
 use SocialConnect\OAuth2\Exception\InvalidState;
 use SocialConnect\OAuth2\Exception\UnknownAuthorization;
 use SocialConnect\OAuth2\Exception\UnknownState;

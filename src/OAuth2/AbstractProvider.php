@@ -56,9 +56,10 @@ abstract class AbstractProvider extends AbstractBaseProvider
      */
     const STATE_BYTES = 16;
 
-    /**
-     * @return string
-     */
+	/**
+	 * @return string
+	 * @throws \Exception
+	 */
     protected function generateState()
     {
         return bin2hex(random_bytes(self::STATE_BYTES));
@@ -155,11 +156,12 @@ abstract class AbstractProvider extends AbstractBaseProvider
         );
     }
 
-    /**
-     * @param string $code
-     * @return AccessToken
-     * @throws InvalidResponse
-     */
+	/**
+	 * @param string $code
+	 * @return AccessToken
+	 * @throws InvalidAccessToken
+	 * @throws InvalidResponse
+	 */
     public function getAccessToken($code)
     {
         if (!is_string($code)) {
@@ -182,20 +184,16 @@ abstract class AbstractProvider extends AbstractBaseProvider
     }
 
     /**
-     * @param string $refresh_token
+     * @param string $refreshToken
      * @return AccessToken
 	 *
      * @throws InvalidResponse
      * @throws InvalidAccessToken
      */
-    public function refreshAccessToken($refresh_token)
+    public function refreshAccessToken(string $refreshToken)
     {
-        if (!is_string($refresh_token)) {
-            throw new InvalidArgumentException('Parameter $refresh_token must be a string');
-        }
-
         $response = $this->httpClient->fromRequest(
-            $this->makeRefreshTokenRequest($refresh_token)
+            $this->makeRefreshTokenRequest($refreshToken)
         );
 
         if (!$response->isSuccess()) {
@@ -209,13 +207,16 @@ abstract class AbstractProvider extends AbstractBaseProvider
         return $this->parseToken($body);
     }
 
-    /**
-     * @param array $parameters
-     * @return AccessToken
-     * @throws \SocialConnect\OAuth2\Exception\InvalidState
-     * @throws \SocialConnect\OAuth2\Exception\UnknownState
-     * @throws \SocialConnect\OAuth2\Exception\UnknownAuthorization
-     */
+	/**
+	 * @param array $parameters
+	 * @return AccessToken|\SocialConnect\Provider\AccessTokenInterface
+	 * @throws InvalidAccessToken
+	 * @throws InvalidResponse
+	 * @throws InvalidState
+	 * @throws Unauthorized
+	 * @throws UnknownAuthorization
+	 * @throws UnknownState
+	 */
     public function getAccessTokenByRequestParameters(array $parameters)
     {
         if (!$this->getBoolOption('stateless', false)) {

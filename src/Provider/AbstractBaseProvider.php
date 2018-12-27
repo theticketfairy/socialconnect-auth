@@ -45,6 +45,7 @@ abstract class AbstractBaseProvider
     /**
      * @param ClientInterface $httpClient
      * @param SessionInterface $session
+     * @param Consumer $consumer
      * @param array $parameters
      */
     public function __construct(ClientInterface $httpClient, SessionInterface $session, Consumer $consumer, array $parameters)
@@ -129,6 +130,12 @@ abstract class AbstractBaseProvider
      * @return \SocialConnect\Provider\AccessTokenInterface
      */
     abstract public function getAccessTokenByRequestParameters(array $requestParameters);
+
+	/**
+	 * @param string $refreshToken
+	 * @return \SocialConnect\Provider\AccessTokenInterface
+	 */
+	abstract public function refreshAccessToken(string $refreshToken);
 
     /**
      * @return string

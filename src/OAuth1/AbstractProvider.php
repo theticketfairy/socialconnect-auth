@@ -52,6 +52,7 @@ abstract class AbstractProvider extends AbstractBaseProvider
 
     /**
      * @param ClientInterface $httpClient
+     * @param SessionInterface $session
      * @param Consumer $consumer
      * @param array $parameters
      */
@@ -79,10 +80,11 @@ abstract class AbstractProvider extends AbstractBaseProvider
      */
     abstract public function getRequestTokenAccessUri();
 
-    /**
-     * @return Token
-     * @throws InvalidResponse
-     */
+	/**
+	 * @return Token
+	 * @throws InvalidRequestToken
+	 * @throws InvalidResponse
+	 */
     protected function requestAuthToken()
     {
         $parameters = [];
@@ -141,6 +143,7 @@ abstract class AbstractProvider extends AbstractBaseProvider
      * @param string $uri
      * @param string $method
      * @param array $parameters
+     * @param array $headers
      * @return \SocialConnect\Common\Http\Response
      */
     public function oauthRequest($uri, $method = Client::GET, $parameters = [], $headers = [])
@@ -191,11 +194,13 @@ abstract class AbstractProvider extends AbstractBaseProvider
         return $this->getAuthorizeUri() . '?' . http_build_query($urlParameters, '', '&');
     }
 
-    /**
-     * @param array $parameters
-     * @return AccessToken
-     * @throws \SocialConnect\OAuth1\Exception\UnknownAuthorization
-     */
+	/**
+	 * @param array $parameters
+	 * @return AccessToken|\SocialConnect\Provider\AccessTokenInterface
+	 * @throws InvalidAccessToken
+	 * @throws InvalidResponse
+	 * @throws UnknownAuthorization
+	 */
     public function getAccessTokenByRequestParameters(array $parameters)
     {
         $token = $this->session->get('oauth1_request_token', $this->getName());
@@ -208,12 +213,13 @@ abstract class AbstractProvider extends AbstractBaseProvider
         return $this->getAccessToken($token, $parameters['oauth_verifier']);
     }
 
-    /**
-     * @param Token $token
-     * @param $oauthVerifier
-     * @return AccessToken
-     * @throws InvalidResponse
-     */
+	/**
+	 * @param Token $token
+	 * @param $oauthVerifier
+	 * @return AccessToken
+	 * @throws InvalidAccessToken
+	 * @throws InvalidResponse
+	 */
     public function getAccessToken(Token $token, $oauthVerifier)
     {
         $this->consumerToken = $token;
@@ -239,6 +245,15 @@ abstract class AbstractProvider extends AbstractBaseProvider
             $response
         );
     }
+
+	/**
+	 * @param string $refreshToken
+	 * @return AccessToken|null
+	 */
+	public function refreshAccessToken(string $refreshToken)
+	{
+		return null;
+	}
 
     /**
      * Parse AccessToken from response's $body

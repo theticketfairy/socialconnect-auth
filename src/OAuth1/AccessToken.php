@@ -8,7 +8,7 @@ namespace SocialConnect\OAuth1;
 
 use SocialConnect\Provider\AccessTokenInterface;
 
-class AccessToken extends \SocialConnect\OAuth1\Token implements AccessTokenInterface
+class AccessToken extends Token implements AccessTokenInterface
 {
     /**
      * @var integer

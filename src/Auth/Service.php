@@ -8,7 +8,6 @@ namespace SocialConnect\Auth;
 
 use Exception;
 use SocialConnect\Common\Http\Client\ClientInterface;
-use SocialConnect\Common\HttpClient;
 use SocialConnect\Provider\Session\SessionInterface;
 
 /**

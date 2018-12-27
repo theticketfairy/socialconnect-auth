@@ -110,13 +110,14 @@ abstract class AbstractProvider extends AbstractBaseProvider
         return null;
     }
 
-    /**
+	/**
      * @link http://openid.net/specs/openid-authentication-2_0.html#verification
-     *
-     * @param $requestParameters
-     * @return AccessToken
-     * @throws InvalidAccessToken
-     */
+	 *
+	 * @param array $requestParameters
+	 * @return AccessToken|\SocialConnect\Provider\AccessTokenInterface
+	 * @throws InvalidAccessToken
+	 * @throws InvalidResponse
+	 */
     public function getAccessTokenByRequestParameters(array $requestParameters)
     {
         $params = [
@@ -157,4 +158,13 @@ abstract class AbstractProvider extends AbstractBaseProvider
 
         throw new InvalidAccessToken;
     }
+
+	/**
+	 * @param string $refreshToken
+	 * @return AccessToken|null
+	 */
+	public function refreshAccessToken(string $refreshToken)
+	{
+		return null;
+	}
 }

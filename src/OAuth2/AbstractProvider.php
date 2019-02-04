@@ -3,7 +3,6 @@
  * SocialConnect project
  * @author: Patsura Dmitry https://github.com/ovr <talk@dmtry.me>
  */
-declare(strict_types=1);
 
 namespace SocialConnect\OAuth2;
 
@@ -39,7 +38,7 @@ abstract class AbstractProvider extends AbstractBaseProvider
     /**
      * {@inheritdoc}
      */
-    public function getAuthUrlParameters(): array
+    public function getAuthUrlParameters()
     {
         $parameters = parent::getAuthUrlParameters();
 
@@ -68,7 +67,7 @@ abstract class AbstractProvider extends AbstractBaseProvider
     /**
      * {@inheritdoc}
      */
-    public function makeAuthUrl(): string
+    public function makeAuthUrl()
     {
         $urlParameters = $this->getAuthUrlParameters();
 
@@ -190,7 +189,7 @@ abstract class AbstractProvider extends AbstractBaseProvider
      * @throws InvalidResponse
      * @throws InvalidAccessToken
      */
-    public function refreshAccessToken(string $refreshToken)
+    public function refreshAccessToken($refreshToken)
     {
         $response = $this->httpClient->fromRequest(
             $this->makeRefreshTokenRequest($refreshToken)

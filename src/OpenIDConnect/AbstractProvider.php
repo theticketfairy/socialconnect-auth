@@ -3,7 +3,6 @@
  * SocialConnect project
  * @author: Patsura Dmitry https://github.com/ovr <talk@dmtry.me>
  */
-declare(strict_types=1);
 
 namespace SocialConnect\OpenIDConnect;
 
@@ -89,7 +88,7 @@ abstract class AbstractProvider extends \SocialConnect\OAuth2\AbstractProvider
     /**
      * {@inheritdoc}
      */
-    public function getAuthUrlParameters(): array
+    public function getAuthUrlParameters()
     {
         $parameters = parent::getAuthUrlParameters();
 

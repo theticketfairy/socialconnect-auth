@@ -3,7 +3,6 @@
  * SocialConnect project
  * @author: Patsura Dmitry https://github.com/ovr <talk@dmtry.me>
  */
-declare(strict_types=1);
 
 namespace SocialConnect\Provider;
 
@@ -72,7 +71,7 @@ abstract class AbstractBaseProvider
      * @param bool $default
      * @return bool
      */
-    public function getBoolOption($key, $default): bool
+    public function getBoolOption($key, $default)
     {
         if (array_key_exists($key, $this->options)) {
             return (bool) $this->options[$key];
@@ -86,7 +85,7 @@ abstract class AbstractBaseProvider
      * @param array $default
      * @return array
      */
-    public function getArrayOption($key, array $default = []): array
+    public function getArrayOption($key, array $default = [])
     {
         if (array_key_exists($key, $this->options)) {
             return (array) $this->options[$key];
@@ -98,7 +97,7 @@ abstract class AbstractBaseProvider
     /**
      * @return string
      */
-    public function getRedirectUrl(): string
+    public function getRedirectUrl()
     {
         return str_replace('${provider}', $this->getName(), $this->redirectUri);
     }
@@ -108,7 +107,7 @@ abstract class AbstractBaseProvider
      *
      * @return array
      */
-    public function getAuthUrlParameters(): array
+    public function getAuthUrlParameters()
     {
         return $this->getArrayOption('auth.parameters', []);
     }
@@ -135,12 +134,12 @@ abstract class AbstractBaseProvider
 	 * @param string $refreshToken
 	 * @return \SocialConnect\Provider\AccessTokenInterface
 	 */
-	abstract public function refreshAccessToken(string $refreshToken);
+	abstract public function refreshAccessToken($refreshToken);
 
     /**
      * @return string
      */
-    abstract public function makeAuthUrl(): string;
+    abstract public function makeAuthUrl();
 
     /**
      * Get current user identity from social network by $accessToken

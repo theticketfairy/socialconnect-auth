@@ -3,7 +3,6 @@
  * SocialConnect project
  * @author: Patsura Dmitry https://github.com/ovr <talk@dmtry.me>
  */
-declare(strict_types=1);
 
 namespace SocialConnect\OAuth2\Provider;
 
@@ -56,7 +55,7 @@ class SmashCast extends \SocialConnect\OAuth2\AbstractProvider
     /**
      * {@inheritdoc}
      */
-    public function getAuthUrlParameters(): array
+    public function getAuthUrlParameters()
     {
         $parameters = $this->getArrayOption('auth.parameters', []);
 

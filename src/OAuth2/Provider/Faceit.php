@@ -100,7 +100,7 @@ class Faceit extends \SocialConnect\OAuth2\AbstractProvider
     /**
      * {@inheritdoc}
      */
-    public function getAuthUrlParameters(): array
+    public function getAuthUrlParameters()
     {
         $parameters = parent::getAuthUrlParameters();
 

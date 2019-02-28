@@ -122,4 +122,51 @@ class Facebook extends \SocialConnect\OAuth2\AbstractProvider
 
         return $user;
     }
+
+	/**
+	 * @param string $access_token
+	 * @return \SocialConnect\Common\Http\Request
+	 */
+	protected function makeExchangeTokenRequest($access_token)
+	{
+		$parameters = [
+			'client_id' => $this->consumer->getKey(),
+			'client_secret' => $this->consumer->getSecret(),
+			'fb_exchange_token' => $access_token,
+			'grant_type' => 'fb_exchange_token',
+		];
+
+		return new \SocialConnect\Common\Http\Request(
+			$this->getRequestTokenUri(),
+			$parameters,
+			$this->requestHttpMethod,
+			[
+				'Content-Type' => 'application/x-www-form-urlencoded'
+			]
+		);
+	}
+
+	/**
+	 * @param string $access_token
+	 * @return AccessToken
+	 *
+	 * @throws InvalidResponse
+	 * @throws InvalidAccessToken
+	 */
+	public function exchangeAccessToken($access_token)
+	{
+		$response = $this->httpClient->fromRequest(
+			$this->makeExchangeTokenRequest($access_token)
+		);
+
+		if (!$response->isSuccess()) {
+			throw new InvalidResponse(
+				'API response with error code',
+				$response
+			);
+		}
+
+		$body = $response->getBody();
+		return $this->parseToken($body);
+	}
 }

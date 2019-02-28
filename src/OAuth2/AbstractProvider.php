@@ -223,18 +223,18 @@ abstract class AbstractProvider extends AbstractBaseProvider
             if (!$state) {
                 throw new UnknownAuthorization();
             }
+
+			if (!isset($parameters['state'])) {
+				throw new UnknownState();
+			}
+
+			if ($state !== $parameters['state']) {
+				throw new InvalidState();
+			}
         }
 
         if (isset($parameters['error']) && $parameters['error'] === 'access_denied') {
             throw new Unauthorized();
-        }
-
-        if (!isset($parameters['state'])) {
-            throw new UnknownState();
-        }
-
-        if ($state !== $parameters['state']) {
-            throw new InvalidState();
         }
 
         if (!isset($parameters['code'])) {

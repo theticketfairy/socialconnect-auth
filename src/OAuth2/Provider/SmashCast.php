@@ -115,14 +115,14 @@ class SmashCast extends \SocialConnect\OAuth2\AbstractProvider
             if (!$state) {
                 throw new UnknownAuthorization();
             }
-        }
 
-        if (!isset($parameters['state'])) {
-            throw new UnknownState();
-        }
+			if (!isset($parameters['state'])) {
+				throw new UnknownState();
+			}
 
-        if ($state !== $parameters['state']) {
-            throw new InvalidState();
+			if ($state !== $parameters['state']) {
+				throw new InvalidState();
+			}
         }
 
         if (isset($parameters['authToken'])) {

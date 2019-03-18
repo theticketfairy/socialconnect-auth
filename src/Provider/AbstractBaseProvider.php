@@ -182,4 +182,22 @@ abstract class AbstractBaseProvider
     {
         return $this->consumer;
     }
+
+	public function setCallbackUrl($url)
+	{
+		$this->session->set('oauth_callback_url', $url, $this->getName());
+
+		return $this;
+	}
+
+	public function getCallbackUrl($remove = true)
+	{
+		$url = $this->session->get('oauth_callback_url', $this->getName());
+
+		if ($remove) {
+			$this->session->delete('oauth_callback_url', $this->getName());
+		}
+
+		return $url;
+	}
 }

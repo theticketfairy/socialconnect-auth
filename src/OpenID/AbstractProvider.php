@@ -93,9 +93,11 @@ abstract class AbstractProvider extends AbstractBaseProvider
     /**
      * {@inheritdoc}
      */
-    public function makeAuthUrl()
+    public function makeAuthUrl($callbackUrl = null)
     {
         $this->discover($this->getOpenIdUrl());
+
+		$this->setCallbackUrl($callbackUrl);
 
         return $this->makeAuthUrlV2(false);
     }

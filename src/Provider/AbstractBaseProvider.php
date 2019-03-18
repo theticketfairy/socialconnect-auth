@@ -137,9 +137,11 @@ abstract class AbstractBaseProvider
 	abstract public function refreshAccessToken($refreshToken);
 
     /**
+	 * @param string $callbackUrl
+	 *
      * @return string
      */
-    abstract public function makeAuthUrl();
+    abstract public function makeAuthUrl($callbackUrl = null);
 
     /**
      * Get current user identity from social network by $accessToken
@@ -185,7 +187,11 @@ abstract class AbstractBaseProvider
 
 	public function setCallbackUrl($url)
 	{
-		$this->session->set('oauth_callback_url', $url, $this->getName());
+		if ($url === null) {
+			$this->session->delete('oauth_callback_url', $this->getName());
+		} else {
+			$this->session->set('oauth_callback_url', $url, $this->getName());
+		}
 
 		return $this;
 	}

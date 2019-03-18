@@ -184,11 +184,13 @@ abstract class AbstractProvider extends AbstractBaseProvider
     /**
      * {@inheritdoc}
      */
-    public function makeAuthUrl()
+    public function makeAuthUrl($callbackUrl = null)
     {
         $urlParameters = [
             'oauth_token' => $this->requestAuthToken()->getKey()
         ];
+
+		$this->setCallbackUrl($callbackUrl);
 
         return $this->getAuthorizeUri() . '?' . http_build_query($urlParameters, '', '&');
     }

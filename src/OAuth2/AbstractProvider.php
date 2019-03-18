@@ -67,7 +67,7 @@ abstract class AbstractProvider extends AbstractBaseProvider
     /**
      * {@inheritdoc}
      */
-    public function makeAuthUrl()
+    public function makeAuthUrl($callbackUrl = null)
     {
         $urlParameters = $this->getAuthUrlParameters();
 
@@ -82,6 +82,8 @@ abstract class AbstractProvider extends AbstractBaseProvider
         if (count($this->scope) > 0) {
             $urlParameters['scope'] = $this->getScopeInline();
         }
+
+		$this->setCallbackUrl($callbackUrl);
 
         return $this->getAuthorizeUri() . '?' . http_build_query($urlParameters);
     }

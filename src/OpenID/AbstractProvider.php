@@ -85,7 +85,7 @@ abstract class AbstractProvider extends AbstractBaseProvider
         $xml = new \SimpleXMLElement($response->getBody());
 
         $this->version = 2;
-        $this->loginEntrypoint = $xml->XRD->Service->URI;
+        $this->loginEntrypoint = (string)$xml->XRD->Service->URI;
 
         return $this->getOpenIdUrl();
     }

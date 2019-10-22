@@ -3,6 +3,7 @@
  * SocialConnect project
  * @author: Patsura Dmitry https://github.com/ovr <talk@dmtry.me>
  */
+declare(strict_types=1);
 
 namespace SocialConnect\OpenID;
 
@@ -93,7 +94,7 @@ abstract class AbstractProvider extends AbstractBaseProvider
     /**
      * {@inheritdoc}
      */
-    public function makeAuthUrl($callbackUrl = null)
+    public function makeAuthUrl($callbackUrl = null, $stateSuffix = null): string
     {
         $this->discover($this->getOpenIdUrl());
 
@@ -164,7 +165,7 @@ abstract class AbstractProvider extends AbstractBaseProvider
 	 * @param string $refreshToken
 	 * @return AccessToken|null
 	 */
-	public function refreshAccessToken($refreshToken)
+	public function refreshAccessToken(string $refreshToken)
 	{
 		return null;
 	}

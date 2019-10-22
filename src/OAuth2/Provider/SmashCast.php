@@ -55,7 +55,7 @@ class SmashCast extends \SocialConnect\OAuth2\AbstractProvider
     /**
      * {@inheritdoc}
      */
-    public function getAuthUrlParameters()
+    public function getAuthUrlParameters(): array
     {
         $parameters = $this->getArrayOption('auth.parameters', []);
 

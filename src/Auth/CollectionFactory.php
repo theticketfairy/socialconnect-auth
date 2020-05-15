@@ -55,9 +55,10 @@ class CollectionFactory implements FactoryInterface
         OAuth2\Provider\Meetup::NAME        => OAuth2\Provider\Meetup::class,
 		OAuth2\Provider\Spotify::NAME       => OAuth2\Provider\Spotify::class,
 		OAuth2\Provider\Faceit::NAME        => OAuth2\Provider\Faceit::class,
+		OAuth2\Provider\Theticketfairy::NAME => OAuth2\Provider\Theticketfairy::class,
+		OAuth2\Provider\Zoom::NAME          => OAuth2\Provider\Zoom::class,
         // OpenID
         OpenID\Provider\Steam::NAME         => OpenID\Provider\Steam::class,
-		OAuth2\Provider\Theticketfairy::NAME => OAuth2\Provider\Theticketfairy::class,
         // OpenIDConnect
         //OpenIDConnect\Provider\Google::NAME        => OpenIDConnect\Provider\Google::class,
         OpenIDConnect\Provider\PixelPin::NAME      => OpenIDConnect\Provider\PixelPin::class,

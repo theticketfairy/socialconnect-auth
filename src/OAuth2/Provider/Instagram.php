@@ -22,7 +22,7 @@ class Instagram extends \SocialConnect\OAuth2\AbstractProvider
      */
     public function getBaseUri()
     {
-        return 'https://api.instagram.com/v1/';
+        return 'https://graph.instagram.com/';
     }
 
     /**
@@ -68,7 +68,7 @@ class Instagram extends \SocialConnect\OAuth2\AbstractProvider
     public function getIdentity(AccessTokenInterface $accessToken)
     {
         $response = $this->httpClient->request(
-            $this->getBaseUri() . 'users/self',
+            $this->getBaseUri() . 'me',
             [
                 'access_token' => $accessToken->getToken()
             ]
@@ -93,10 +93,6 @@ class Instagram extends \SocialConnect\OAuth2\AbstractProvider
             [
                 'id' => 'id',
                 'username' => 'username',
-                'bio' => 'bio',
-                'website' => 'website',
-                'profile_picture' => 'pictureURL',
-                'full_name' => 'fullname'
             ]
         );
 

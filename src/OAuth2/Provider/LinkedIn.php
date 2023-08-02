@@ -24,7 +24,7 @@ class LinkedIn extends \SocialConnect\OAuth2\AbstractProvider
      */
     public function getBaseUri()
     {
-        return 'https://api.linkedin.com/v1/';
+        return 'https://api.linkedin.com/v2/';
     }
 
     /**
@@ -64,16 +64,47 @@ class LinkedIn extends \SocialConnect\OAuth2\AbstractProvider
         throw new InvalidAccessToken('AccessToken is not a valid JSON');
     }
 
-    /**
+	protected function fetchPrimaryEmail(AccessTokenInterface $accessToken, User $user)
+	{
+		$response = $this->httpClient->request(
+			$this->getBaseUri() . 'emailAddress',
+			[
+				'q' => 'members',
+				'projection' => '(elements*(handle~))' // (elements*(primary,type,handle~))
+			],
+			Client::GET,
+			[
+				'Authorization' => 'Bearer ' . $accessToken->getToken(),
+			]
+		);
+
+		if (!$response->isSuccess()) {
+			throw new InvalidResponse(
+				'API response with error code (on getting email)',
+				$response
+			);
+		}
+
+		$result = $response->json();
+
+		if (isset($result->elements)) {
+			$element = array_shift($result->elements);
+
+			if ($element && isset($element->{'handle~'}) && isset($element->{'handle~'}->emailAddress)) {
+				$user->email = $element->{'handle~'}->emailAddress;
+				$user->emailVerified = true;
+			}
+		}
+	}
+
+	/**
      * {@inheritdoc}
      */
     public function getIdentity(AccessTokenInterface $accessToken)
     {
         $response = $this->httpClient->request(
-            $this->getBaseUri() . 'people/~:(id,first-name,last-name,email-address,picture-url,location:(name))',
-            [
-                'format' => 'json'
-            ],
+            $this->getBaseUri() . 'me',
+            [],
             Client::GET,
             [
                 'Authorization' => 'Bearer ' . $accessToken->getToken(),
@@ -88,6 +119,7 @@ class LinkedIn extends \SocialConnect\OAuth2\AbstractProvider
         }
 
         $result = $response->json();
+
         if (!$result) {
             throw new InvalidResponse(
                 'API response is not a valid JSON object',
@@ -95,16 +127,17 @@ class LinkedIn extends \SocialConnect\OAuth2\AbstractProvider
             );
         }
 
-        $hydrator = new ObjectMap(
-            [
-                'id'           => 'id',
-                'emailAddress' => 'email',
-                'firstName'    => 'firstname',
-                'lastName'     => 'lastname',
-                'pictureUrl'   => 'pictureURL',
-            ]
-        );
+        $hydrator = new ObjectMap([
+			'id' => 'id',
+			'emailAddress' => 'email',
+			'localizedFirstName' => 'firstname',
+			'localizedLastName' => 'lastname',
+		]);
 
-        return $hydrator->hydrate(new User(), $result);
+        $user = $hydrator->hydrate(new User(), $result);
+
+		$this->fetchPrimaryEmail($accessToken, $user);
+
+		return $user;
     }
 }

@@ -3,7 +3,6 @@
  * SocialConnect project
  * @author: Patsura Dmitry https://github.com/ovr <talk@dmtry.me>
  */
-declare(strict_types=1);
 
 namespace SocialConnect\OAuth2\Provider;
 
@@ -116,14 +115,14 @@ class SmashCast extends \SocialConnect\OAuth2\AbstractProvider
             if (!$state) {
                 throw new UnknownAuthorization();
             }
-        }
 
-        if (!isset($parameters['state'])) {
-            throw new UnknownState();
-        }
+			if (!isset($parameters['state'])) {
+				throw new UnknownState();
+			}
 
-        if ($state !== $parameters['state']) {
-            throw new InvalidState();
+			if ($state !== $parameters['state']) {
+				throw new InvalidState();
+			}
         }
 
         if (isset($parameters['authToken'])) {

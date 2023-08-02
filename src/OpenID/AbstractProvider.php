@@ -86,7 +86,7 @@ abstract class AbstractProvider extends AbstractBaseProvider
         $xml = new \SimpleXMLElement($response->getBody());
 
         $this->version = 2;
-        $this->loginEntrypoint = $xml->XRD->Service->URI;
+        $this->loginEntrypoint = (string)$xml->XRD->Service->URI;
 
         return $this->getOpenIdUrl();
     }
@@ -94,9 +94,11 @@ abstract class AbstractProvider extends AbstractBaseProvider
     /**
      * {@inheritdoc}
      */
-    public function makeAuthUrl(): string
+    public function makeAuthUrl($callbackUrl = null, $stateSuffix = null): string
     {
         $this->discover($this->getOpenIdUrl());
+
+		$this->setCallbackUrl($callbackUrl);
 
         return $this->makeAuthUrlV2(false);
     }

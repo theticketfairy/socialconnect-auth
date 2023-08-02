@@ -6,6 +6,7 @@
 
 namespace SocialConnect\OAuth2\Provider;
 
+use SocialConnect\Common\Http\Client\Client;
 use SocialConnect\Provider\AccessTokenInterface;
 use SocialConnect\Provider\Exception\InvalidAccessToken;
 use SocialConnect\Provider\Exception\InvalidResponse;
@@ -22,7 +23,7 @@ class Twitch extends \SocialConnect\OAuth2\AbstractProvider
      */
     public function getBaseUri()
     {
-        return 'https://api.twitch.tv/kraken/';
+        return 'https://api.twitch.tv/helix/';
     }
 
     /**
@@ -30,7 +31,7 @@ class Twitch extends \SocialConnect\OAuth2\AbstractProvider
      */
     public function getAuthorizeUri()
     {
-        return 'https://api.twitch.tv/kraken/oauth2/authorize';
+        return 'https://id.twitch.tv/oauth2/authorize';
     }
 
     /**
@@ -38,7 +39,7 @@ class Twitch extends \SocialConnect\OAuth2\AbstractProvider
      */
     public function getRequestTokenUri()
     {
-        return 'https://api.twitch.tv/kraken/oauth2/token';
+        return 'https://id.twitch.tv/oauth2/token';
     }
 
     /**
@@ -54,7 +55,9 @@ class Twitch extends \SocialConnect\OAuth2\AbstractProvider
      */
     public function getScopeInline()
     {
-        // @link https://github.com/justintv/Twitch-API/blob/master/authentication.md#scopes
+        /**
+		 * @link https://dev.twitch.tv/docs/authentication#scopes
+		 */
         return implode('+', $this->scope);
     }
 
@@ -77,9 +80,12 @@ class Twitch extends \SocialConnect\OAuth2\AbstractProvider
     public function getIdentity(AccessTokenInterface $accessToken)
     {
         $response = $this->httpClient->request(
-            $this->getBaseUri() . 'user',
+            $this->getBaseUri() . 'users',
+            [],
+            Client::GET,
             [
-                'oauth_token' => $accessToken->getToken()
+				'Authorization' => 'Bearer ' . $accessToken->getToken(),
+				'Client-Id' => $this->consumer->getKey()
             ]
         );
 
@@ -91,7 +97,8 @@ class Twitch extends \SocialConnect\OAuth2\AbstractProvider
         }
 
         $result = $response->json();
-        if (!$result) {
+
+        if (!$result || !isset($result->data) || !isset($result->data[0])) {
             throw new InvalidResponse(
                 'API response is not a valid JSON object',
                 $response
@@ -100,12 +107,19 @@ class Twitch extends \SocialConnect\OAuth2\AbstractProvider
 
         $hydrator = new ObjectMap(
             [
-                '_id' => 'id',
+                'id' => 'id',
                 'display_name' => 'fullname', // Custom Capitalized Users name
-                'name' => 'username',
+                'login' => 'username',
+				'profile_image_url' => 'pictureURL'
             ]
         );
 
-        return $hydrator->hydrate(new User(), $result);
+        $user = $hydrator->hydrate(new User(), $result->data[0]);
+
+        if ($user->email) {
+			$user->emailVerified = true;
+		}
+
+        return $user;
     }
 }

@@ -68,14 +68,20 @@ abstract class AbstractProvider extends AbstractBaseProvider
     /**
      * {@inheritdoc}
      */
-    public function makeAuthUrl(): string
+    public function makeAuthUrl($callbackUrl = null, $stateSuffix = null): string
     {
         $urlParameters = $this->getAuthUrlParameters();
 
         if (!$this->getBoolOption('stateless', false)) {
+			$urlParameters['state'] = $this->generateState();
+
+			if ($stateSuffix) {
+				$urlParameters['state'] .= $stateSuffix;
+			}
+
             $this->session->set(
                 'oauth2_state',
-                $urlParameters['state'] = $this->generateState(),
+                $urlParameters['state'],
                 $this->getName()
             );
         }
@@ -83,6 +89,8 @@ abstract class AbstractProvider extends AbstractBaseProvider
         if (count($this->scope) > 0) {
             $urlParameters['scope'] = $this->getScopeInline();
         }
+
+		$this->setCallbackUrl($callbackUrl);
 
         return $this->getAuthorizeUri() . '?' . http_build_query($urlParameters);
     }
@@ -224,18 +232,18 @@ abstract class AbstractProvider extends AbstractBaseProvider
             if (!$state) {
                 throw new UnknownAuthorization();
             }
+
+			if (!isset($parameters['state'])) {
+				throw new UnknownState();
+			}
+
+			if ($state !== $parameters['state']) {
+				throw new InvalidState();
+			}
         }
 
         if (isset($parameters['error']) && $parameters['error'] === 'access_denied') {
             throw new Unauthorized();
-        }
-
-        if (!isset($parameters['state'])) {
-            throw new UnknownState();
-        }
-
-        if ($state !== $parameters['state']) {
-            throw new InvalidState();
         }
 
         if (!isset($parameters['code'])) {
